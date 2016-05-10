@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    @{
+        var address = ViewBag.address;
+        
+    }
+
+   
+    <script src="~/Scripts/JavaScript4.js"></script>
+</head>
+<body>
+    <form action="/login/billingaddressform" method="post" onsubmit="return validateaddress()">
+        First Name:*<input id="firstname" name="firstname" type="text" value="@address.getfirstname()"><br /><br />
+        Middle Name:<input id="middlename" name="middlename" type="text" value="@address.getmiddlename()"><br /><br />
+        Last Name:*<input id="lastname" name="lastname" type="text" value="@address.getlastname()"><br /><br />
+        Suffix:<input id="suffix" name="suffix" type="text"  value="@address.getsuffix()"><br/><br />
+        Address 1:*<input id="address1" name="address1" type="text" value="@address.getaddress1()"><br />
+        Address 2:<input id="address2" name="address2" type="text" value="@address.getaddress2()"><br />
+        City:*<input id="city" name="city" type="text" value="@address.getcity()"><br />
+        State:*<input id="state" name="state" type="text" value="@address.getstate()"><br />
+        Zip Code:*<input id="zipcode" name="zipcode" type="text" value="@address.getzipcode()"><br />
+        Country:*<input id="country" name="country" type="text" value="@address.getcountry()"><br />
+        <input value="Update" type="submit" />
+    </form>
+
+
+
+
+</body>
+</html>

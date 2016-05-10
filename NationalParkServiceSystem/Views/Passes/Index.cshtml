@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <script src="~/Scripts/JavaScript.js"></script>
+</head>
+<body>
+    <form action="/passes/search" method="get" id="filter">
+        <select name="parkname" id="parkname">
+            <option value="0"></option>
+            @foreach (dynamic p in (ViewBag.park))
+            {
+                <option value="@p.getparkid()">@p.getparkname()</option>
+            }
+        </select>
+
+        <select name="passtype" id="passtype">
+            <option value="0"></option>
+            @foreach (dynamic p in (ViewBag.pass))
+            {
+                <option value="@p.getpassid()">@p.getpassname()</option>
+            }
+        </select>
+        <input type="submit">
+    </form>
+      <table>
+          <tr>
+              <td>Pass Name</td>
+              <td>Description</td>
+              <td>Cost</td>
+             @if (ViewBag.password !=null){ 
+                 <td>BuyNow</td>
+             }
+
+          </tr>
+          @foreach (dynamic p in (ViewBag.name))
+          {
+             
+              if (p.getvisable() == 1)
+              {
+                  <tr>
+                      <td> @p.gettitle()</td>
+                      <td> @p.getdescription() </td>
+                      <td>@p.getcost()</td>
+                      
+                      @if (p.getbuyerable()==1 && ViewBag.password !=null){
+                      <td><form action="/Passes/BuyNow" method="post" >
+    <input id="passid" name="passid" type="hidden" value="@p.getpassid()"/>
+    <input value="Buy Now" type="submit" />
+</form></td>}
+                  </tr>
+              }
+          }
+      </table>
+ 
+    
+
+
+</body>
+</html>

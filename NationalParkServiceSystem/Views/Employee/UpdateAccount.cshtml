@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <script src="~/Scripts/JavaScript3.js"></script>
+</head>
+<body>
+    <form action="/Employee/UpdateAccountform" method="post" onsubmit="return updateemployee()">
+        Username:<input id="username" name="username" type="text" /><br /><br />
+        Password:<input id="password" name="password" type="password" /><br /><br />
+        Confirm Password:<input id="password2" name="password2" type="password" /><br />
+        <input value="Update Account" type="submit" />
+    </form>
+</body>
+</html>

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <script src="~/Scripts/JavaScript.js"></script>
+</head>
+<body>
+    <form action="/Home/CreateAccountform" method="post" onsubmit="return createaccount()">
+        Username:<input id="username" name="username" type="text" /><br /><br />
+        Password:<input id="password" name="password" type="password" /><br /><br/>
+        Confirm Password:<input id="password2" name="password2" type="password" /><br />
+        First Name:*<input id="firstname" name="firstname" type="text" /><br />
+        Middle Name:<input id="middlename" name="middlename" type="text" /><br />
+        Last Name:*<input id="lastname" name="lastname" type="text" /><br />
+        Suffix:<input id="suffix" name="suffix" type="text"/><br />
+        Address 1:*<input id="address1" name="address1" type="text" /><br />
+        Address 2:<input id="address2" name="address2" type="text" /><br />
+        City:*<input id="city" name="city" type="text" /><br />
+        State:*<input id="state" name="state" type="text" /><br />
+        Zip Code:*<input id="zipcode" name="zipcode" type="text" /><br />
+        Country:*<input id="country" name="country" type="text" /><br />
+        <input value="Create Account" type="submit" />
+    </form>
+</body>
+</html>

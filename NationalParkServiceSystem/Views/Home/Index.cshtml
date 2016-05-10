@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <script src="~/Scripts/JavaScript.js"></script>
+</head>
+<body>
+    <form action="/Home/Welcome" method="post" onsubmit="return validatepassword()">
+       Username:<input  id="username" name="username" type="text" maxlength="255"/><br /><br/>
+       Password:<input id="password" name="password" type="password" /><br />
+        <input value="Log In" type="submit" />
+     </form>
+ @Html.ActionLink("Create Account","CreateAccount")
+   
+    @Html.ActionLink("Forget Password", "forgetpassword")
+   
+
+
+</body>
+</html>
