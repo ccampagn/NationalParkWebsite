@@ -156,6 +156,15 @@ namespace NationalParkServiceSystem.Controllers
            Response.Write(@"<script language='javascript'>alert('Incorrect Username');</script>");
            return View("~/Views/Employee/Index.cshtml");
         }
+         public ActionResult UserDirectory()
+         {
+
+             db db = new db();
+             List<useraccount> directory = db.getalluser();
+             ViewBag.useraccount = directory;
+             return View();
+            
+         }
 
     }
 }

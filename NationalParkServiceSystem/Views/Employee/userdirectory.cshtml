@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "userdirectory";
+}
+
+<h2>userdirectory</h2>
+
+<table>
+@foreach (dynamic p in (ViewBag.useraccount))
+        {
+    <tr>
+    <td>
+        
+            @p.getpassword().getusername()
+        
+    </td>
+    <td>
+            @p.getaddress().getfirstname()
+    </td>
+        <td>
+            @p.getaddress().getmiddlename()
+        </td>
+    <td>
+        @p.getaddress().getlastname()
+    </td>
+        <td>
+            @p.getaddress().getsuffix()
+        </td>
+        <td>
+            @p.getaddress().getaddress1()
+        </td>
+        <td>
+            @p.getaddress().getaddress2()
+        </td>
+        <td>
+            @p.getaddress().getcity()
+        </td>
+        <td>
+            @p.getaddress().getzipcode()
+        </td>
+        <td>
+            @p.getaddress().getcountry()
+        </td>
+        <td>
+            @p.getaddress().getstate()
+        </td>
+        </tr>
+}
+
+</table>

@@ -900,5 +900,27 @@ namespace NationalParkServiceSystem.Models
 
             return address;
         }
+
+        public List<useraccount> getalluser()
+        {
+            db db = new db();
+            List<useraccount> account = new List<useraccount>();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            String sql = "SELECT username,firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country FROM nationalpark.password JOIN nationalpark.billingaddress ON userid=idpassword";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                password password = new password(rdr[0].ToString(), null);
+                address address = new address(rdr[1].ToString(), rdr[2].ToString(), rdr[3].ToString(), rdr[4].ToString(), rdr[5].ToString(), rdr[6].ToString(), rdr[7].ToString(), rdr[8].ToString(), rdr[9].ToString(), rdr[10].ToString());
+                useraccount user = new useraccount(password, address);
+                account.Add(user);
+
+            }
+            rdr.Close();
+            db.closeconn(conn);
+            return account;
+        }
     }
 }
