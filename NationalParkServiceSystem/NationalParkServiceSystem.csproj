@@ -42,6 +42,9 @@
     <Reference Include="BarcodeLib.Barcode.ASP.NET">
       <HintPath>..\..\..\..\..\..\Downloads\BarcodeLib_ASP.NETBarcode_Trial\BarcodeLib_ASP.NETBarcode_Trial\BarcodeLib.Barcode.ASP.NET.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\packages\iTextSharp.5.5.9\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="KeepAutomation.Barcode.Web">
       <HintPath>..\..\..\..\..\..\Downloads\KA.Barcode.for.NETSuite\KeepAutomation.Barcode.Web.dll</HintPath>
     </Reference>
@@ -49,6 +52,18 @@
     <Reference Include="mysql.data, Version=6.9.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Downloads\mysql-connector-net-5.2.7-noinstall\mysql.data.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="Reports">
+      <HintPath>..\..\..\..\..\..\Downloads\ReportNET_0_09_05_FW2_Beta-release\Reports.dll</HintPath>
+    </Reference>
+    <Reference Include="sharpPDF">
+      <HintPath>..\..\..\..\..\..\Downloads\sharpPDF_2_0_Beta2_dll\sharpPDF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -199,6 +214,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\address.cs" />
+    <Compile Include="Models\CodeFile1.cs" />
+    <Compile Include="Models\createpdf.cs" />
     <Compile Include="Models\db.cs" />
     <Compile Include="Models\email.cs" />
     <Compile Include="Models\employeeaccount.cs" />

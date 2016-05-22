@@ -35,23 +35,11 @@ namespace NationalParkServiceSystem.Controllers
             string zipcode = Request.Form["zipcode"];
             string country = Request.Form["country"];
             address address = new address(firstname, middlename, lastname, suffix, address1, address2, city, state, zipcode, country);
-            password pw = new password(username, passwordhash.CreateHash(password));
+            password pw = new password(0,username, passwordhash.CreateHash(password));
             employeeaccount ea = new employeeaccount(pw, address);
             pw.CreateAccountemployee(ea,((employeeaccount)Session["useremployee"]).getpassword().getusername());
             Response.Write(@"<script language='javascript'>alert('Account Creation Sucess user id of " + username + " ');</script>");
-            BarCode barcode = new BarCode();
-            barcode.Symbology = KeepAutomation.Barcode.Symbology.EAN8;
-            barcode.CodeToEncode = "11120223";
-            barcode.ChecksumEnabled = true;
-            barcode.X = 1;
-            barcode.Y = 50;
-            barcode.BarCodeWidth = 100;
-            barcode.BarCodeHeight = 70;
-            barcode.Orientation = KeepAutomation.Barcode.Orientation.Degree90;
-            barcode.BarcodeUnit = KeepAutomation.Barcode.BarcodeUnit.Pixel;
-            barcode.DPI = 72;
-            barcode.ImageFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
-            barcode.generateBarcodeToImageFile("C:/barcode/new.jpeg");
+            
         
            return View("~/Views/Employee/Welcome.cshtml");
             
@@ -63,7 +51,7 @@ namespace NationalParkServiceSystem.Controllers
             string username = Request.Form["username"];
             string password = Request.Form["password"];
             address address = db.getemployeeaddress(username); 
-            password pw = new password(username, password);
+            password pw = new password(db.getemployeeid(username),username, password);
             bool sucess = pw.loginemployee(pw);
             if (sucess)
             {
@@ -75,7 +63,6 @@ namespace NationalParkServiceSystem.Controllers
                     return View("~/Views/Employee/changepassword.cshtml");
                 }
                 Session["useremployee"] = new employeeaccount(pw, address);
-                   // pw.getusername();
                 return View("~/Views/Employee/Welcome.cshtml");
             }
             else
@@ -91,7 +78,7 @@ namespace NationalParkServiceSystem.Controllers
              string username = (string)Session["changepassword"];
              string password = Request.Form["password"];
              db db = new db();
-             password pw = new password(username, password);
+             password pw = new password(0,username, password);
              newpassword=pw.checkprevoiusemployee(pw);
              if (newpassword)
              {
@@ -100,7 +87,7 @@ namespace NationalParkServiceSystem.Controllers
              }
              string hashcode = passwordhash.CreateHash(pw.getpassword());
              
-             password pws = new password(pw.getusername(), hashcode);
+             password pws = new password(0,pw.getusername(), hashcode);
              db.updateemployeepassword(pws);
              db.updatelogin(1,pw.getusername());
 
@@ -142,7 +129,7 @@ namespace NationalParkServiceSystem.Controllers
              string username = Request.Form["username"];
             string password = Request.Form["password"];
             int id = db.getemployeeid(((employeeaccount)Session["useremployee"]).getpassword().getusername());
-            password pw = new password(username, passwordhash.CreateHash(password));
+            password pw = new password(0,username, passwordhash.CreateHash(password));
             bool pass = pw.updateemployeepassword(pw,id );
            if (pass)
            {
@@ -161,6 +148,7 @@ namespace NationalParkServiceSystem.Controllers
 
              db db = new db();
              List<useraccount> directory = db.getalluser();
+             ViewBag.useraccount = directory;
              ViewBag.useraccount = directory;
              return View();
             

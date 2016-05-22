@@ -271,15 +271,15 @@ namespace NationalParkServiceSystem.Models
 
 
       
-        public ArrayList getpreviouspassword(string username)
+        public ArrayList getpreviouspassword(password password)
         {
             ArrayList myAL = new ArrayList();
             db db = new db();
-            int userid = db.getuserid(username);
+           
             MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
             String sql = "SELECT hashvalue FROM passwordchangehistory where userid=@userid";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@userid", userid);
+            cmd.Parameters.AddWithValue("@userid", password.getuserid());
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
@@ -307,18 +307,7 @@ namespace NationalParkServiceSystem.Models
             db.closeconn(conn);
             return myAL;
         }
-        public void updatepassword(passwordchange pw)
-        {
-            db db = new db();
-            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
-            String sql = "UPDATE password SET password=@password where idpassword = @userid and active=1";
-            MySqlCommand cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@password",pw.getnewpassword() );
-            cmd.Parameters.AddWithValue("@userid", db.getuserid(pw.getpassword().getusername()));
-            cmd.ExecuteNonQuery();
-            db.closeconn(conn);
-            db.insertpassword(new password(pw.getpassword().getusername(),pw.getnewpassword()));
-        }
+        
         public void updateemployeepassword(password pw)
         {
             db db = new db();
@@ -338,8 +327,7 @@ namespace NationalParkServiceSystem.Models
         public bool forgetpassword(password pw)
         {
             db db = new db();
-            int id = db.getuserid(pw.getusername());
-            if (id != 0)
+            if (pw.getuserid() != 0)
             {
                 if (db.checkifactive(pw.getusername()))
                 {
@@ -347,7 +335,7 @@ namespace NationalParkServiceSystem.Models
                     string sql = "INSERT INTO forgetcode (code, userid,date) VALUES (@randomcode,@id,NOW())";
                     MySqlCommand cmd = new MySqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@randomcode", pw.getpassword());
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@id", pw.getuserid());
                     cmd.ExecuteNonQuery();
                     db.closeconn(conn);
                     return true;
@@ -363,10 +351,16 @@ namespace NationalParkServiceSystem.Models
             String sql = "UPDATE password SET password=@password where idpassword = @userid";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@password", pw.getpassword());
-            cmd.Parameters.AddWithValue("@userid", db.getuserid(pw.getusername()));
+            cmd.Parameters.AddWithValue("@userid", pw.getuserid());
+            cmd.ExecuteNonQuery();
+            sql = "INSERT INTO passwordchangehistory (userid, hashvalue,date) VALUES (@userid,@hashvalue,Now())";
+            cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@userid", pw.getuserid());
+            cmd.Parameters.AddWithValue("@hashvalue", pw.getpassword());
             cmd.ExecuteNonQuery();
             db.closeconn(conn);
-            db.insertpassword(new password(pw.getusername(), pw.getpassword()));
+            db.closeconn(conn);
+            
         }
 
         public string getusernamecode(int id)
@@ -560,13 +554,13 @@ namespace NationalParkServiceSystem.Models
             string sql = "INSERT INTO Employee (username, password,idcreated,passwordlogin,datecreated) VALUES (@username,@password,@create,0,Now())";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@username", password.getpassword().getusername());
-            cmd.Parameters.AddWithValue("@password", password.getpassword());
+            cmd.Parameters.AddWithValue("@password", password.getpassword().getpassword());
             cmd.Parameters.AddWithValue("@create", db.getemployeeid(username));
             cmd.ExecuteNonQuery();
             sql = "INSERT INTO employeechangehistory (employeeid, hashvalue,date,changerid) VALUES (@employeeid,@hashvalue,Now(),@chargeid)";
             cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@employeeid", db.getemployeeid(password.getpassword().getusername()));
-            cmd.Parameters.AddWithValue("@hashvalue", password.getpassword());
+            cmd.Parameters.AddWithValue("@hashvalue", password.getpassword().getpassword());
             cmd.Parameters.AddWithValue("@chargeid", db.getemployeeid(password.getpassword().getusername()));
             cmd.ExecuteNonQuery();
             sql = "INSERT INTO employeeaddress (firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country,employeeid) values (@firstname,@middlename,@lastname,@suffix,@address1,@address2,@city,@state,@zipcode,@country,@employeeid)";
@@ -737,14 +731,14 @@ namespace NationalParkServiceSystem.Models
             cmd.ExecuteNonQuery();
             db.closeconn(conn);
         }
-        public address getaddress(string username)
+        public address getaddress(int userid)
         {
             db db = new db();
             address address = null;
             MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
             String sql = "SELECT * FROM billingaddress where userid = @username";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@username", db.getuserid(username));
+            cmd.Parameters.AddWithValue("@username", userid);
             MySqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.Read())
             {
@@ -906,13 +900,13 @@ namespace NationalParkServiceSystem.Models
             db db = new db();
             List<useraccount> account = new List<useraccount>();
             MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
-            String sql = "SELECT username,firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country FROM nationalpark.password JOIN nationalpark.billingaddress ON userid=idpassword";
+            String sql = "SELECT username,firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country,idpassword FROM nationalpark.password JOIN nationalpark.billingaddress ON userid=idpassword where active!=2";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
 
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
-                password password = new password(rdr[0].ToString(), null);
+                password password = new password(Convert.ToInt32(rdr[11]),rdr[0].ToString(), null);
                 address address = new address(rdr[1].ToString(), rdr[2].ToString(), rdr[3].ToString(), rdr[4].ToString(), rdr[5].ToString(), rdr[6].ToString(), rdr[7].ToString(), rdr[8].ToString(), rdr[9].ToString(), rdr[10].ToString());
                 useraccount user = new useraccount(password, address);
                 account.Add(user);
@@ -921,6 +915,79 @@ namespace NationalParkServiceSystem.Models
             rdr.Close();
             db.closeconn(conn);
             return account;
+        }
+
+        public bool checkiflogin(string username)
+        {
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            String sql = "SELECT * FROM password where active=1 AND username=@username";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.Read())
+            {
+                return true;
+            }
+            rdr.Close();
+            db.closeconn(conn);
+            return false; 
+        }
+
+        public void newaccount(useraccount user, int code)
+        {
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            string sql = "INSERT INTO Password (username, password,datecreated) VALUES (@username,@password,Now())";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@username", user.getpassword().getusername());
+            cmd.Parameters.AddWithValue("@password", user.getpassword().getpassword());
+            cmd.ExecuteNonQuery();
+            int userid = db.getuserid(user.getpassword().getusername());
+            sql = "INSERT INTO uservalidate (validationcode, userid,time) VALUES (@randomcode,@id,NOW())";
+            cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@randomcode", code);
+            cmd.Parameters.AddWithValue("@id", userid);
+            cmd.ExecuteNonQuery();           
+            sql = "INSERT INTO passwordchangehistory (userid, hashvalue,date) VALUES (@userid,@hashvalue,Now())";
+            cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@userid", userid);
+            cmd.Parameters.AddWithValue("@hashvalue", user.getpassword().getpassword());
+            cmd.ExecuteNonQuery();
+            sql = "INSERT INTO billingaddress (firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country,userid) values (@firstname,@middlename,@lastname,@suffix,@address1,@address2,@city,@state,@zipcode,@country,@userid)";
+            cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@userid", userid);
+            cmd.Parameters.AddWithValue("@firstname", user.getaddress().getfirstname());
+            cmd.Parameters.AddWithValue("@middlename", user.getaddress().getmiddlename());
+            cmd.Parameters.AddWithValue("@lastname", user.getaddress().getlastname());
+            cmd.Parameters.AddWithValue("@suffix", user.getaddress().getsuffix());
+            cmd.Parameters.AddWithValue("@address1", user.getaddress().getaddress1());
+            cmd.Parameters.AddWithValue("@address2", user.getaddress().getaddress2());
+            cmd.Parameters.AddWithValue("@city", user.getaddress().getcity());
+            cmd.Parameters.AddWithValue("@state", user.getaddress().getstate());
+            cmd.Parameters.AddWithValue("@zipcode", user.getaddress().getzipcode());
+            cmd.Parameters.AddWithValue("@country", user.getaddress().getcountry());
+            cmd.ExecuteNonQuery();
+            db.closeconn(conn);
+          
+            
+        }
+
+        public bool checkifnotlock(int username)
+        {
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            String sql = "SELECT * FROM password where locks=0 AND idpassword=@username";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.Read())
+            {
+                return true;
+            }
+            rdr.Close();
+            db.closeconn(conn);
+            return false;
         }
     }
 }

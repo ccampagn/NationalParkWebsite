@@ -20,8 +20,8 @@ namespace NationalParkServiceSystem.Controllers
             else
             {
                 db db=new db();
-                string username = ((useraccount)Session["useraccount"]).getpassword().getusername();
-               ViewBag.address=db.getaddress(username);
+                int userid = ((useraccount)Session["useraccount"]).getpassword().getuserid();
+               ViewBag.address=db.getaddress(userid);
                 return View();
             }
         }
@@ -52,11 +52,9 @@ namespace NationalParkServiceSystem.Controllers
             string currentpassword = Request.Form["currentpassword"];
             string password = Request.Form["password"];
             string username = ((useraccount)Session["useraccount"]).getpassword().getusername();
-            password pw = new password(username, currentpassword);
-            passwordchange pwchange = new passwordchange(pw, password);
-            bool change = pwchange.changepassword(pwchange);
-
-            //get current hash value
+            int userid = Convert.ToInt32(((useraccount)Session["useraccount"]).getpassword().getuserid());
+            password pw = new password(userid,username, password);
+            bool change = pw.changepassword(pw, currentpassword);
             if (change)
             {
                 Response.Write(@"<script language='javascript'>alert('Password Change Sucess');</script>");

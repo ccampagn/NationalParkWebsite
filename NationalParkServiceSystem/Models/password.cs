@@ -10,13 +10,19 @@ namespace NationalParkServiceSystem.Models
 {
     public class password
     {
-         public password(string username,string passwords )
+         public password(int userid,string username,string passwords )
     {
+        this.userid = userid;
         this.username = username;
         this.passwords = passwords;
     }
+        private int userid { get; set; } 
         private string username { get; set; }
         private string passwords { get; set; }
+        public void setuserid(int userid)
+        {
+            this.userid = userid;
+        }
         public void setusername(string username)
         {
             this.username = username;
@@ -24,6 +30,10 @@ namespace NationalParkServiceSystem.Models
         public void setpassword(string passwords)
         {
             this.passwords = passwords;
+        }
+        public int getuserid()
+        {
+            return userid;
         }
         public string getusername()
         {
@@ -33,7 +43,7 @@ namespace NationalParkServiceSystem.Models
         {
             return passwords;
         }
-        public int CreateAccount(password password,address address)
+        public int CreateAccount(useraccount user)
         {
             int errorcode = 1;
             Random rnd = new Random();
@@ -45,9 +55,9 @@ namespace NationalParkServiceSystem.Models
                 code = rnd.Next(1, 99999999);
                 valid = db.checkcode(code);
             }
-            password usercode = new password(password.getusername(), code.ToString());
+            password usercode = new password(0,user.getpassword().getusername(), code.ToString());
             
-            bool sucess=db.validnewuser(password.getusername());
+            bool sucess=db.validnewuser(user.getpassword().getusername());
             if (sucess == true)
             {
                 errorcode = 0;
@@ -61,10 +71,7 @@ namespace NationalParkServiceSystem.Models
                     errorcode = 2;
                 }
                 if (errorcode == 0) {
-                db.insertaccount(password, code);
-                db.insertpassword(password);
-                db.addnewbillingaddres(address, db.getuserid(password.getusername()));
-               
+                    db.newaccount(user, code);                                
              }
             }
             return errorcode;
@@ -84,7 +91,6 @@ namespace NationalParkServiceSystem.Models
         {
             db db = new db();
             int id = db.getuserid(pw.getusername());
-            Debug.Print(id.ToString());
             bool sucess = false;
             int status = 0;
             if (db.checkdeactive(pw.getusername()))
@@ -94,12 +100,16 @@ namespace NationalParkServiceSystem.Models
             if (id != 0 )
             {
                 status = 1;
-                if (db.checkifactive(pw.getusername()))
+                if (db.checkiflogin(pw.getusername()))
                 {
-                    status = 3;
-                    sucess = passwordhash.ValidatePassword(pw.getpassword(), db.getuserhash(pw.getusername()));
-                    if (sucess){
-                        status = 2;
+                    if (db.checkifnotlock(pw.getuserid()))
+                    {
+                        status = 5;
+                        sucess = passwordhash.ValidatePassword(pw.getpassword(), db.getuserhash(pw.getusername()));
+                        if (sucess)
+                        {
+                            status = 2;
+                        }
                     }
                 }
             }
@@ -111,14 +121,13 @@ namespace NationalParkServiceSystem.Models
         public bool loginemployee(password pw)
         {
             db db = new db();
-            int id = db.getemployeeid(pw.getusername());
             bool sucess = false;
-            if (id != 0)
+            if (pw.getuserid() != 0)
             {
                 sucess = passwordhash.ValidatePassword(pw.getpassword(), db.getemployeehash(pw.getusername()));
                 
             }
-            db.insertemployeelogin(id, sucess);
+            db.insertemployeelogin(pw.getuserid(), sucess);
             return sucess;
         }
         public bool updateemployeepassword(password pw,int chargeid)
@@ -156,13 +165,35 @@ namespace NationalParkServiceSystem.Models
             Debug.Print(pw.getpassword());
             for (int x = 0; x < myAL.Count; x++)
             {
-                Debug.Print(pw.getpassword());
-                Debug.Print(myAL[x].ToString());
                 bool newpassword = passwordhash.ValidatePassword(pw.getpassword(), myAL[x].ToString());
                 if (newpassword)
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+
+        public bool changepassword(password pw, string currentpassword)
+        {
+            db db = new db();
+            bool passwords = false;
+            bool checkpassword = passwordhash.ValidatePassword(currentpassword, db.getuserhash(pw.getusername()));
+            if (checkpassword)
+            {
+                ArrayList ab = db.getpreviouspassword(pw);
+                for (int x = 0; x < ab.Count; x++)
+                {
+                    passwords = passwordhash.ValidatePassword(pw.getpassword(), ab[x].ToString());
+                    if (passwords)
+                    {
+                       
+                        return false;
+                    }
+                }
+                pw.setpassword(passwordhash.CreateHash(pw.getpassword()));
+                db.updatepassword(pw);
+                return true;
             }
             return false;
         }

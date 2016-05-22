@@ -29,7 +29,7 @@ namespace NationalParkServiceSystem.Models
             mail.To.Add(password.getusername());
             
             mail.Subject = "Welcome to the National Park System Website";
-            mail.Body = "Your account need to be validate at the link http://localhost:61940/Home/validateaccount/" + password.getpassword()+". The code will expire in 24 hour.";
+            mail.Body = "Your account need to be validate at the link http://localhost:61940/Home/validateaccount/" + password.getpassword()+". The code will expire in 1 hour.";
 
             SmtpServer.Port = 587;
             SmtpServer.Credentials = new System.Net.NetworkCredential("ccampagn@ycp.edu", "newyork13");

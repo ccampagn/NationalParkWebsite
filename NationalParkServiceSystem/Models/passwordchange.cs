@@ -32,28 +32,7 @@ namespace NationalParkServiceSystem.Models
         {
             return newpassword;
         }
-        public bool changepassword(passwordchange pw)
-        {
-            db db = new db();
-            string hash=db.getuserhash(pw.getpassword().getusername());
-            bool password = false;
-            bool valid = passwordhash.ValidatePassword(pw.getpassword().getpassword(), hash);
-            if (valid)
-            {
-                ArrayList ab = db.getpreviouspassword(pw.getpassword().getusername());
-                for (int x = 0; x < ab.Count; x++)
-                {
-                    password = passwordhash.ValidatePassword(pw.getnewpassword(), ab[x].ToString());
-                    if (password)
-                    {
-                        return false;
-                    }
-                }
-                pw.setnewpassword(passwordhash.CreateHash(pw.getnewpassword()));
-                db.updatepassword(pw);
-            }
-            return valid;
-        }
+       
 
         
     }
