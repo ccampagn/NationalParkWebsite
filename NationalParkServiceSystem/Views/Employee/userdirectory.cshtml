@@ -44,8 +44,18 @@
             @p.getaddress().getstate()
         </td>
         <td>
-            @p.getpassword().getuserid()
-           
+           @if (p.getactive() == 0)
+            {
+            <form action="/Employee/Lock" method="post">
+                <input id="userid" name="userid" type="hidden" value="@p.getpassword().getuserid()" />
+                <input value="Lock Account" type="submit" />
+            </form>
+            }else{
+            <form action="/Employee/Unlock" method="post">
+                <input id="userid" name="userid" type="hidden" value="@p.getpassword().getuserid()" />
+                <input value="Unlock Account" type="submit" />
+            </form>
+            }
         </td>
         </tr>
 }

@@ -51,6 +51,8 @@ namespace NationalParkServiceSystem.Controllers
             db db = new db();
             int addresscode= db.getaddressscode( db.getuserid(((useraccount)Session["useraccount"]).getpassword().getusername()));
             db.insertpasses(Convert.ToInt32(id),addresscode);
+            createpdf a = new createpdf();
+            a.createpass(((useraccount)Session["useraccount"]));
             return View();
         }
 

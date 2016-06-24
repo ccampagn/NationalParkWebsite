@@ -135,7 +135,7 @@ namespace NationalParkServiceSystem.Controllers
             string country = Request.Form["country"];
             address address = new address(firstname, middlename, lastname, suffix, address1, address2, city, state, zipcode, country);
             password pw = new password(0,username, passwordhash.CreateHash(password));
-            useraccount user = new useraccount(pw, address);
+            useraccount user = new useraccount(pw, address,0);
             int sucess=pw.CreateAccount(user);
             if (sucess==0)
             {
@@ -164,7 +164,7 @@ namespace NationalParkServiceSystem.Controllers
             
             if (sucess==2)
             {
-                Session["useraccount"] = new useraccount(pw,db.getaddress(pw.getuserid()));
+                Session["useraccount"] = new useraccount(pw,db.getaddress(pw.getuserid()),0);
                 return View("~/Views/Home/Home.cshtml");
             }
             else if(sucess==0)

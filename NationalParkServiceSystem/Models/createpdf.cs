@@ -13,39 +13,38 @@ namespace NationalParkServiceSystem.Models
 {
     public class createpdf
     {
-        public void helloworld()
+        public void createpass(useraccount user)
         {
-            const string text =
-  "Facin exeraessisit la consenim iureet dignibh eu facilluptat vercil dunt autpat. " +
-  "Ecte magna faccum dolor sequisc iliquat, quat, quipiss equipit accummy niate magna " +
-  "facil iure eraesequis am velit, quat atis dolore dolent luptat nulla adio odipissectet " +
-  "lan venis do essequatio conulla facillandrem zzriusci bla ad minim inis nim velit eugait " +
-  "aut aut lor at ilit ut nulla ate te eugait alit augiamet ad magnim iurem il eu feuissi.\n" +
-  "Guer sequis duis eu feugait luptat lum adiamet, si tate dolore mod eu facidunt adignisl in " +
-  "henim dolorem nulla faccum vel inis dolutpatum iusto od min ex euis adio exer sed del " +
-  "dolor ing enit veniamcon vullutat praestrud molenis ciduisim doloborem ipit nulla consequisi.\n" +
-  "Nos adit pratetu eriurem delestie del ut lumsandreet nis exerilisit wis nos alit venit praestrud " +
-  "dolor sum volore facidui blaor erillaortis ad ea augue corem dunt nis  iustinciduis euisi.\n" +
-  "Ut ulputate volore min ut nulpute dolobor sequism olorperilit autatie modit wisl illuptat dolore " +
-  "min ut in ute doloboreet ip ex et am dunt at.";
-
+            // Create a new PDF document
             PdfDocument document = new PdfDocument();
 
+            // Create an empty page
             PdfPage page = document.AddPage();
+
+            // Get an XGraphics object for drawing
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Times New Roman", 10, XFontStyle.Bold);
-            XTextFormatter tf = new XTextFormatter(gfx);
 
-            XRect rect = new XRect(40, 100, 100, 100);
-            gfx.DrawRectangle(XBrushes.SeaShell, rect);
-            //tf.Alignment = ParagraphAlignment.Left;
-            tf.DrawString(text, font, XBrushes.Black, rect, XStringFormats.TopLeft);
+            // Create a font
+            XFont font = new XFont("Verdana", 20, XFontStyle.Bold);
+            XRect rect = new XRect(0, 0, 250, 140);
+            XStringFormat format = new XStringFormat();
 
+
+            // Draw the text
+            gfx.DrawString(user.getaddress().getfirstname()+" "+user.getaddress().getlastname(), font, XBrushes.Black,
+              0,30);
+            gfx.DrawString(user.getaddress().getaddress1(), font, XBrushes.Black,
+           50,60);
+            gfx.DrawString(user.getaddress().getcity()+","+user.getaddress().getstate()+" "+user.getaddress().getzipcode(), font, XBrushes.Black,
+              90,90);
            
-            const string filename = @"C:\barcode\test.pdf";
+
+            // Save the document...
+            string filename = @"C:\barcode\test.pdf";
             document.Save(filename);
             // ...and start a viewer.
             Process.Start(filename);
         }
+       
     }
 }

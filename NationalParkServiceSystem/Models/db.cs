@@ -17,7 +17,7 @@ namespace NationalParkServiceSystem.Models
             MySql.Data.MySqlClient.MySqlConnection conn;
             string myConnectionString;
 
-            myConnectionString = "server=127.0.0.1;uid=root;" +
+            myConnectionString = "server=192.168.1.154;uid=root;" +
                 "pwd=newyork;database=nationalpark;";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             conn.ConnectionString = myConnectionString;
@@ -900,7 +900,7 @@ namespace NationalParkServiceSystem.Models
             db db = new db();
             List<useraccount> account = new List<useraccount>();
             MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
-            String sql = "SELECT username,firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country,idpassword FROM nationalpark.password JOIN nationalpark.billingaddress ON userid=idpassword where active!=2";
+            String sql = "SELECT username,firstname,middlename,lastname,suffix,address1,address2,city,state,zipcode,country,idpassword,locks FROM nationalpark.password JOIN nationalpark.billingaddress ON userid=idpassword where active!=2";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
 
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -908,7 +908,7 @@ namespace NationalParkServiceSystem.Models
             {
                 password password = new password(Convert.ToInt32(rdr[11]),rdr[0].ToString(), null);
                 address address = new address(rdr[1].ToString(), rdr[2].ToString(), rdr[3].ToString(), rdr[4].ToString(), rdr[5].ToString(), rdr[6].ToString(), rdr[7].ToString(), rdr[8].ToString(), rdr[9].ToString(), rdr[10].ToString());
-                useraccount user = new useraccount(password, address);
+                useraccount user = new useraccount(password, address, Convert.ToInt32(rdr[12].ToString()));
                 account.Add(user);
 
             }
@@ -988,6 +988,19 @@ namespace NationalParkServiceSystem.Models
             rdr.Close();
             db.closeconn(conn);
             return false;
+        }
+
+        public void lockaccount(int locks,int userid)
+        {
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            String sql = "UPDATE password SET locks=@locks where idpassword = @userid";
+
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@locks", locks);
+            cmd.Parameters.AddWithValue("@userid", userid);
+            cmd.ExecuteNonQuery();
+            db.closeconn(conn);
         }
     }
 }

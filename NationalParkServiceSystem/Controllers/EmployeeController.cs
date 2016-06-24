@@ -149,9 +149,28 @@ namespace NationalParkServiceSystem.Controllers
              db db = new db();
              List<useraccount> directory = db.getalluser();
              ViewBag.useraccount = directory;
-             ViewBag.useraccount = directory;
              return View();
             
+         }
+         [HttpPost]
+         public ActionResult Lock()
+         {
+             int userid = Convert.ToInt32(Request.Form["userid"]);
+             db db = new db();
+             db.lockaccount(1,userid);
+             List<useraccount> directory = db.getalluser();
+             ViewBag.useraccount = directory;
+             return View("~/Views/Employee/userdirectory.cshtml");
+         }
+         [HttpPost]
+         public ActionResult UnLock()
+         {
+             int userid = Convert.ToInt32(Request.Form["userid"]);
+             db db = new db();
+             db.lockaccount(0,userid);
+             List<useraccount> directory = db.getalluser();
+             ViewBag.useraccount = directory;
+             return View("~/Views/Employee/userdirectory.cshtml");
          }
 
     }

@@ -7,13 +7,15 @@ namespace NationalParkServiceSystem.Models
 {
     public class useraccount
     {
-        public useraccount(password password, address address)
+        public useraccount(password password, address address,int active)
         {
             this.password = password;
             this.address = address;
+            this.active = active;
         }
         private password password { get; set; }
         private address address { get; set; }
+        private int active { get; set; }
           public void setpassword(password password)
         {
             this.password = password;
@@ -30,11 +32,10 @@ namespace NationalParkServiceSystem.Models
         {
             return address;
         }
-        public useraccount loadaccount()
+        public int getactive()
         {
-            useraccount user = new useraccount(null,null);
-            return user;
-
+            return active;
         }
+      
     }
 }
