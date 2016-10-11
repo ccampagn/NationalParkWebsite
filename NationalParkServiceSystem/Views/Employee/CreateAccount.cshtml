@@ -4,6 +4,7 @@
 
     <title>@ViewBag.Title - My ASP.NET MVC Application</title>
     <script src="~/Scripts/JavaScript2.js"></script>
+    <script src="~/Scripts/District.js"></script>
 </head>
 <body>
     <form action="/Employee/CreateAccountform" method="post" onsubmit="return createemployee()">
@@ -20,6 +21,14 @@
         State:<input id="state" name="state" type="text" /><br />
         Zip Code:<input id="zipcode" name="zipcode" type="text" /><br />
         Country:<input id="country" name="country" type="text" /><br />
+        Park:<select name="parkname" id="parkname" onchange="AddDistrict()">
+            <option value="0"></option>
+            @foreach (dynamic p in (ViewBag.park))
+            {
+                <option value="@p.getparkid()">@p.getparkname()</option>
+            }
+        </select>
+        <br />
         <input value="Create Account" type="submit" />
     </form>
 </body>

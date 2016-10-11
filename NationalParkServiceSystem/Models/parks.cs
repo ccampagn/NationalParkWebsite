@@ -7,11 +7,10 @@ namespace NationalParkServiceSystem.Models
 {
     public class parks
     {
-        public parks(int parkid,string parkname )
+        public parks(int parkid,string parkname)
     {
         this.parkid = parkid;
-        this.parkname = parkname;
-       
+        this.parkname = parkname;      
     }
         public int getparkid()
         {

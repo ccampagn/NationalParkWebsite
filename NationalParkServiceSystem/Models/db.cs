@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
-
 namespace NationalParkServiceSystem.Models
 {
     public class db
@@ -489,15 +488,33 @@ namespace NationalParkServiceSystem.Models
 
 
         }
-        public void insertpasses(int barcode,int addresscode)
+        public ArrayList getparkdistrict()
+        {
+            ArrayList district = new ArrayList();
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            String sql = "SELECT * FROM district";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                district.Add(new District(Convert.ToInt32(rdr[0]), rdr[1].ToString(), Convert.ToInt32(rdr[2])));
+            }
+            rdr.Close();
+            db.closeconn(conn);
+            return district;
+
+
+        }
+        public void insertpasses(int barcode,int userid)
         {
             db db = new db();
             MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
-            string sql = "INSERT INTO purchpass (passcode, parkcode,purchasetime,addresscode) VALUES (@passcode,@parkcode,Now(),@addresscode)";
+            string sql = "INSERT INTO purchpass (passcode, parkcode,purchasetime,userid,employeebool) VALUES (@passcode,@parkcode,Now(),@userid,0)";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@passcode", db.getnewbarcode().ToString().PadLeft(12, '0'));
             cmd.Parameters.AddWithValue("@parkcode", barcode);
-            cmd.Parameters.AddWithValue("@addresscode",addresscode);
+            cmd.Parameters.AddWithValue("@userid",userid);
   
             cmd.ExecuteNonQuery();
             db.closeconn(conn);
@@ -576,6 +593,11 @@ namespace NationalParkServiceSystem.Models
             cmd.Parameters.AddWithValue("@state", password.getaddress().getstate());
             cmd.Parameters.AddWithValue("@zipcode", password.getaddress().getzipcode());
             cmd.Parameters.AddWithValue("@country", password.getaddress().getcountry());
+            cmd.ExecuteNonQuery();
+            sql = "INSERT INTO EmployeePark (parkid,employeeid) VALUES (@parkid,@employeeid)";
+            cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@parkid", "abc");
+            cmd.Parameters.AddWithValue("@employeeid", db.getemployeeid(password.getpassword().getusername()));
             cmd.ExecuteNonQuery();
             db.closeconn(conn);              
         }
@@ -1002,5 +1024,120 @@ namespace NationalParkServiceSystem.Models
             cmd.ExecuteNonQuery();
             db.closeconn(conn);
         }
+
+        public parks getparkuser(string username)
+        {
+            return null;
+        }
+
+       public int addgpscoor(GPScoordinate coordinate)
+        {
+            int geoid = 0;
+            db db = new db();
+            MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+            string sql = "INSERT INTO geocoordinate (latitude,longitude) VALUES (@latitude,@longitude)";
+            MySqlCommand cmd = new MySqlCommand(sql,conn);
+            cmd.Parameters.AddWithValue("@latitude", coordinate.getlatitude());
+            cmd.Parameters.AddWithValue("@longitude", coordinate.getlongitude());
+            cmd.ExecuteNonQuery();
+            sql = "SELECT MAX(idgeocoordinate) FROM  geocoordinate";
+            cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.Read())
+            {
+                geoid = (int)rdr[0];
+            }
+            rdr.Close();
+            db.closeconn(conn);
+            return geoid;
+        }
+
+       public int addaddress(streetaddress streetaddress)
+       {
+           int addressid = 0;
+           db db = new db();
+           MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+           string sql = "INSERT INTO streetaddress (address,city,state,zipcode,country) VALUES (@address,@city,@state,@zipcode,@country)";
+           MySqlCommand cmd = new MySqlCommand(sql, conn);
+           cmd.Parameters.AddWithValue("@address", streetaddress.getaddress());
+           cmd.Parameters.AddWithValue("@city", streetaddress.getcity());
+           cmd.Parameters.AddWithValue("@state", streetaddress.getaddress());
+           cmd.Parameters.AddWithValue("@zipcode", streetaddress.getzipcode());
+           cmd.Parameters.AddWithValue("@country", streetaddress.getcountry());
+           cmd.ExecuteNonQuery();
+           sql = "SELECT MAX(idstreetaddress) FROM  streetaddress";
+           cmd = new MySqlCommand(sql, conn);
+           MySqlDataReader rdr = cmd.ExecuteReader();
+           if (rdr.Read())
+           {
+              addressid = (int)rdr[0];
+           }
+           rdr.Close();
+           db.closeconn(conn);
+           return addressid;   
+       }
+
+       public void addcampground(Campground camp)
+       {
+           db db = new db();
+           MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+           string sql = "INSERT INTO campground (name,description,idaddress,idgps,idpark) VALUES (@name,@description,@idaddress,@idgps,@idpark)";
+           MySqlCommand cmd = new MySqlCommand(sql, conn);
+           cmd.Parameters.AddWithValue("@name", camp.getcampgroundname());
+           cmd.Parameters.AddWithValue("@description", camp.getdescription());
+           cmd.Parameters.AddWithValue("@idaddress", camp.getaddress().getaddressid());
+           cmd.Parameters.AddWithValue("@idgps", camp.getgpscoordinate().getgpsid());
+           cmd.Parameters.AddWithValue("@idpark", camp.getparks().getparkid());
+           cmd.ExecuteNonQuery();
+           db.closeconn(conn);
+       }
+
+       public List<Campground> getallcampground()
+       {
+           db db = new db();
+           List<Campground> campground = new List<Campground>();
+           MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+           String sql = "SELECT * FROM nationalpark.campground JOIN nationalpark.streetaddress ON idaddress=idstreetaddress JOIN nationalpark.geocoordinate ON idgps=idgeocoordinate JOIN nationalpark.park ON campground.idpark=park.idpark";
+           MySqlCommand cmd = new MySqlCommand(sql, conn);
+
+           MySqlDataReader rdr = cmd.ExecuteReader();
+           while (rdr.Read())
+           {
+
+               GPScoordinate coor=new GPScoordinate(Convert.ToInt32(rdr[13]),Convert.ToDecimal(rdr[14]),Convert.ToDecimal(rdr[15]));
+               streetaddress address=new streetaddress(Convert.ToInt32(rdr[6]),rdr[7].ToString(),rdr[8].ToString(),rdr[9].ToString(),rdr[10].ToString(),rdr[11].ToString());
+               parks park = new parks(Convert.ToInt32(rdr[15]),rdr[16].ToString());
+               Campground camp = new Campground(Convert.ToInt32(rdr[0]), rdr[1].ToString(), rdr[2].ToString(), address, coor, park);
+               campground.Add(camp);
+
+           }
+           rdr.Close();
+           db.closeconn(conn);
+           return campground;
+       }
+
+       public Campground getcampgroundinfo(int value)
+       {
+
+           db db = new db();
+          Campground campground = null;
+           MySql.Data.MySqlClient.MySqlConnection conn = db.openconn();
+           String sql = "SELECT * FROM nationalpark.campground JOIN nationalpark.streetaddress ON idaddress=idstreetaddress JOIN nationalpark.geocoordinate ON idgps=idgeocoordinate JOIN nationalpark.park ON campground.idpark=park.idpark where idcampground=@id";
+
+           MySqlCommand cmd = new MySqlCommand(sql, conn);
+           cmd.Parameters.AddWithValue("@id", value);
+           MySqlDataReader rdr = cmd.ExecuteReader();
+           if (rdr.Read())
+           {
+               Debug.Write(rdr[1]);
+               GPScoordinate coor = new GPScoordinate(Convert.ToInt32(rdr[13]), Convert.ToDecimal(rdr[14]), Convert.ToDecimal(rdr[15]));
+               streetaddress address = new streetaddress(Convert.ToInt32(rdr[6]), rdr[7].ToString(), rdr[8].ToString(), rdr[9].ToString(), rdr[10].ToString(), rdr[11].ToString());
+               parks park = new parks(Convert.ToInt32(rdr[15]), rdr[16].ToString());
+               campground = new Campground(Convert.ToInt32(rdr[0]), rdr[1].ToString(), rdr[2].ToString(), address, coor, park);
+           }
+           rdr.Close();
+           db.closeconn(conn);
+           return campground;
+       }
     }
 }

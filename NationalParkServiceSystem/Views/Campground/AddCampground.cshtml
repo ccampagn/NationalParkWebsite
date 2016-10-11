@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+    <script src="~/Scripts/JavaScript2.js"></script>
+    <script src="~/Scripts/District.js"></script>
+</head>
+<body>
+    <form action="/Campground/addcampgroundform" method="post" onsubmit="return addcampground()">
+       
+        Campground Name:<input id="campground" name="campground" type="text" /><br />
+        Description:<input id="description" name="description" type="text" /><br />
+        Latitude:<input id="latitude" name="latitude" type="text" /><br />
+        Longitude:<input id="longitude" name="longitude" type="text" /><br />
+        Address:<input id="address" name="address" type="text" /><br />
+        City:<input id="city" name="city" type="text" /><br />
+        State:<input id="state" name="state" type="text" /><br />
+        Zip Code:<input id="zipcode" name="zipcode" type="text" /><br />
+        Country:<input id="country" name="country" type="text" /><br />
+        Park:<select name="parkname" id="parkname">
+            <option value="0"></option>
+            @foreach (dynamic p in (ViewBag.park))
+            {
+                <option value="@p.getparkid()">@p.getparkname()</option>
+            }
+        </select>
+        <br />
+        <input value="Add Campground" type="submit" />
+    </form>
+</body>
+</html>

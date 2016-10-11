@@ -206,6 +206,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CampgroundController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LogInController.cs" />
@@ -215,17 +216,23 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\address.cs" />
+    <Compile Include="Models\Campground.cs" />
     <Compile Include="Models\CodeFile1.cs" />
     <Compile Include="Models\createpdf.cs" />
     <Compile Include="Models\db.cs" />
+    <Compile Include="Models\District.cs" />
     <Compile Include="Models\email.cs" />
     <Compile Include="Models\employeeaccount.cs" />
+    <Compile Include="Models\GPScoordinate.cs" />
+    <Compile Include="Models\Loop.cs" />
     <Compile Include="Models\parks.cs" />
     <Compile Include="Models\passes.cs" />
     <Compile Include="Models\passtype.cs" />
     <Compile Include="Models\password.cs" />
     <Compile Include="Models\passwordchange.cs" />
     <Compile Include="Models\passwordhash.cs" />
+    <Compile Include="Models\Site.cs" />
+    <Compile Include="Models\streetaddress.cs" />
     <Compile Include="Models\useraccount.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -288,6 +295,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\bower.json" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Scripts\District.js" />
     <Content Include="Scripts\javascript.js" />
     <Content Include="Scripts\JavaScript2.js" />
     <Content Include="Scripts\JavaScript3.js" />
@@ -352,6 +360,9 @@
     <Content Include="Views\LogIn\BillingAddress.cshtml" />
     <Content Include="Views\Employee\userdirectory.cshtml" />
     <Content Include="Views\Photo\Index.cshtml" />
+    <Content Include="Views\Campground\AddCampground.cshtml" />
+    <Content Include="Views\Campground\Index.cshtml" />
+    <Content Include="Views\Campground\campgroundinfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

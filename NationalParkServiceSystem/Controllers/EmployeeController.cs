@@ -34,10 +34,12 @@ namespace NationalParkServiceSystem.Controllers
             string state = Request.Form["state"];
             string zipcode = Request.Form["zipcode"];
             string country = Request.Form["country"];
+            string parkname = Request.Form["parkname"];
+            db db = new db();
             address address = new address(firstname, middlename, lastname, suffix, address1, address2, city, state, zipcode, country);
-            password pw = new password(0,username, passwordhash.CreateHash(password));
-            employeeaccount ea = new employeeaccount(pw, address);
-            pw.CreateAccountemployee(ea,((employeeaccount)Session["useremployee"]).getpassword().getusername());
+           password pw = new password(0,username, passwordhash.CreateHash(password));
+           // employeeaccount ea = new employeeaccount(pw, address,park);
+            //pw.CreateAccountemployee(ea,((employeeaccount)Session["useremployee"]).getpassword().getusername());
             Response.Write(@"<script language='javascript'>alert('Account Creation Sucess user id of " + username + " ');</script>");
             
         
@@ -50,7 +52,8 @@ namespace NationalParkServiceSystem.Controllers
             db db = new db();
             string username = Request.Form["username"];
             string password = Request.Form["password"];
-            address address = db.getemployeeaddress(username); 
+            address address = db.getemployeeaddress(username);
+            parks park = db.getparkuser(username);
             password pw = new password(db.getemployeeid(username),username, password);
             bool sucess = pw.loginemployee(pw);
             if (sucess)
@@ -62,7 +65,7 @@ namespace NationalParkServiceSystem.Controllers
                     Session["changepassword"] = pw.getusername();
                     return View("~/Views/Employee/changepassword.cshtml");
                 }
-                Session["useremployee"] = new employeeaccount(pw, address);
+                Session["useremployee"] = new employeeaccount(pw, address,park);
                 return View("~/Views/Employee/Welcome.cshtml");
             }
             else
@@ -103,7 +106,7 @@ namespace NationalParkServiceSystem.Controllers
             int id = db.getnewemployeeid(); 
             if (Session["useremployee"] == null)
             {
-
+               
 
                 
                return View("~/Views/Employee/Index.cshtml");
@@ -111,7 +114,11 @@ namespace NationalParkServiceSystem.Controllers
             
             
             ViewBag.id = id.ToString().PadLeft(8, '0');
-            Debug.Print(id.ToString());
+            ArrayList park = db.getparknameall();
+            ArrayList district = db.getparkdistrict();
+           
+            
+            ViewBag.park = park;
             return View();
         }
         public ActionResult UpdateAccount()

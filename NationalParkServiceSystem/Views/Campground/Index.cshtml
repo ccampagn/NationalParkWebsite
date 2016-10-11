@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "userdirectory";
+}
+
+<h2>Campground</h2>
+
+<table>
+    <tr>
+        <td>
+
+           Campground Name
+
+        </td>
+        <td>
+
+            Park Name
+
+        </td>
+
+    </tr>
+    @foreach (dynamic p in (ViewBag.campground))
+    {
+        <tr>
+            <td>
+
+                @p.getcampgroundname()
+
+            </td>
+            <td>
+
+                @p.getparks().getparkname()
+
+            </td>
+
+            <td>
+
+                
+                <a href="/Campground/campgroundinfo?campgroundid=@p.getcampgroundid()">fddfhz</a>
+
+
+            </td>
+ 
+        </tr>
+    }
+
+</table>

@@ -1,0 +1,94 @@
+﻿@using NationalParkServiceSystem.Models;
+@{
+  
+    Campground camp = ViewBag.campgroundinfo;
+    ViewBag.Title = "userdirectory";
+}
+
+<h2>Campground</h2>
+
+<table>
+
+    <tr>
+        <td>
+
+               
+            Campground Name
+
+        </td>
+        <td>
+
+            Park Name
+
+        </td>
+        <td>
+
+            Address
+
+        </td>
+        <td>
+
+            City
+
+        </td>
+        <td>
+
+            State
+
+        </td>
+        <td>
+
+            Zip Code
+
+        </td>
+        <td>
+
+            Country
+
+        </td>
+
+
+    </tr>
+
+        <tr>
+            <td>
+
+                @camp.getcampgroundname()
+
+            </td>
+            <td>
+
+                @camp.getdescription()
+
+            </td>
+            <td>
+
+                @camp.getaddress().getaddress()
+
+            </td>
+            <td>
+
+                @camp.getaddress().getcity()
+
+            </td>
+            <td>
+
+                @camp.getaddress().getstate()
+
+            </td>
+            <td>
+
+                @camp.getaddress().getzipcode()
+
+            </td>
+            <td>
+
+                @camp.getaddress().getcountry()
+
+            </td>
+
+          
+        </tr>
+   
+
+</table>
